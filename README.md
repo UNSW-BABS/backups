@@ -5,10 +5,11 @@ Not yet for general use. Please tell me if you intend to try using it.
 
 ## Requirements
 
-python 2.7.5+ or maybe older. Python 2.6.6 (default on old katana and old kdm) is insufficient. Could presumably be made Python3 compatible with easily.
-crc32 command or cksum -o3 (note: cksum may not have this option) or rhash (on kdm.restech)
-config.cfg must contain an appropriate password or token
-java. (Note: load using the unswdataarchive on kdm.restech.)
+* python 2.7.5+ or maybe older. Python 2.6.6 (default on old katana and old kdm) is insufficient. Could presumably be made Python3 compatible with easily.
+* crc32 command or cksum -o3 (note: cksum may not have this option) or rhash (on kdm.restech)
+* config.cfg must contain an appropriate password or token
+* java. (Note: load using the unswdataarchive on kdm.restech.)
+
 Note: All options will need to be configured for use on a different computer with a different RDMP project. 
 
 A copy of aterm.jar is attached to this page (in case you don't have it already). Use config.cfg used for uploading. Alternatively, run /share/apps/unswdataarchive/2015-09-10/script.zip from KDM on any other Linux, Windows or Mac computer than KDM to get your own copies.
