@@ -32,3 +32,31 @@ Options:
                        Estimate of the number of days since last back up,
                        default=7
 --verbose             Add full error messages to output
+
+## Change Log
+
+v0.13.2 fix counts
+v0.13.1 Add --verbose flag to add full error messages to logs
+v0.13.0 Add summary numbers for each error type
+v0.12.2 fix bug with local file not found
+v0.12.1 fix bug with crc32
+v0.12 add try excepts around all os commands
+v0.11 bug fix path_subtract with trailing slash. Added commands to unexpected error messages.
+v0.10 add option for time since expected last backup, added appendIssue() function, made all file exceptions write to file and continue
+v0.9 add checks for java, python  v2.7.5, improve error message for checksums.
+v0.8.1 allow folder to be relative
+v0.8 try to use rhash -c or cksum -o 3 if crc32 command is not available.
+v0.7 fixed comparison of checksums of empty files, set offline status of empty files to true
+v0.6.2 fixed backslash fix breaking escaping of quotes
+v0.6.1 fixed escaping for backslashes in remote folder exists check
+v0.6 added escaping for backslashes
+v0.5 check if filename causes aterm.jar to crash, add error messages to output log, escape quotes, improve quoting of filenames
+v0.4 add local files with permission issues to log
+v0.3 added explicit connection test, fixed path joining for offline check command
+v0.2 added explicit checks for all assumptions about inputs
+  - folder starts with path subtract
+  - folder exists
+  - rdmp_id has a 'D' then 7 digits
+  - config_path exists and contains both config.cfg and aterm.jar
+  - remote folder exists
+v0.1 added spaces in outputs, --path_add option
