@@ -3,7 +3,7 @@ Confirm that files are backed up to UNSW's Data Archive and offline
 
 Not yet for general use. Please tell me if you intend to try using it.
 
-##Requirements
+## Requirements
 
 python 2.7.5+ or maybe older. Python 2.6.6 (default on old katana and old kdm) is insufficient. Could presumably be made Python3 compatible with easily.
 crc32 command or cksum -o3 (note: cksum may not have this option) or rhash (on kdm.restech)
@@ -13,7 +13,7 @@ Note: All options will need to be configured for use on a different computer wit
 
 A copy of aterm.jar is attached to this page (in case you don't have it already). Use config.cfg used for uploading. Alternatively, run /share/apps/unswdataarchive/2015-09-10/script.zip from KDM on any other Linux, Windows or Mac computer than KDM to get your own copies.
 
-##Usage 
+## Usage 
 
 python check_archived.py prefix folder
 
