@@ -16,7 +16,8 @@ A copy of aterm.jar is attached to this page (in case you don't have it already)
 
 ## Usage 
 
-```python check_archived.py prefix folder
+```
+python check_archived.py prefix folder
 
 Options:
  -h, --help            show this help message and exit
@@ -32,7 +33,7 @@ Options:
  --days_since_backup=DAYS_SINCE_BACKUP
                        Estimate of the number of days since last back up,
                        default=7
---verbose             Add full error messages to output
+ --verbose             Add full error messages to output
 ```
 ## Change Log
 
