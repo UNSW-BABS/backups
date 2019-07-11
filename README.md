@@ -37,6 +37,7 @@ Options:
 ```
 ## Change Log
 
+v0.13.4 list problem if offline gives an IndexError and file isn't empty as expected<br/>
 v0.13.3 catch IndexError exceptions with remote_crc<br/>
 v0.13.2 fix counts<br/>
 v0.13.1 Add --verbose flag to add full error messages to logs<br/>
