@@ -16,23 +16,23 @@ A copy of aterm.jar is attached to this page (in case you don't have it already)
 
 ## Usage 
 
-python check_archived.py prefix folder<br/>
-<br/>
-Options:<br/>
- -h, --help            show this help message and exit<br/>
- --rdmp_id=RDMP_ID     Research Data Management Plan ID, default='D0235810'<br/>
- --config_path=CONFIG_PATH<br/>
-                       Location of config.cfg and aterm.jar,<br/>
-                       default='/Users/rna/PROGRAMS/RDS_SYNC/2017-02-06/'<br/>
- --path_subtract=PATH_SUBTRACT<br/>
-                       Prefix of local path to subtract from remote path,<br/>
-                       default='/Volumes/Data1/'<br/>
- --path_add=PATH_ADD   Infix to add to remote path after RDMP ID e.g.<br/>
-                       'projects', default=''<br/>
- --days_since_backup=DAYS_SINCE_BACKUP<br/>
-                       Estimate of the number of days since last back up,<br/>
-                       default=7<br/>
---verbose             Add full error messages to output<br/>
+```python check_archived.py prefix folder
+
+Options:
+ -h, --help            show this help message and exit
+ --rdmp_id=RDMP_ID     Research Data Management Plan ID, default='D0235810'
+ --config_path=CONFIG_PATH
+                       Location of config.cfg and aterm.jar,
+                       default='/Users/rna/PROGRAMS/RDS_SYNC/2017-02-06/'
+ --path_subtract=PATH_SUBTRACT
+                       Prefix of local path to subtract from remote path,
+                       default='/Volumes/Data1/'
+ --path_add=PATH_ADD   Infix to add to remote path after RDMP ID e.g.
+                       'projects', default=''
+ --days_since_backup=DAYS_SINCE_BACKUP
+                       Estimate of the number of days since last back up,
+                       default=7
+--verbose             Add full error messages to output```
 
 ## Change Log
 
