@@ -4,6 +4,7 @@
 Given a local folder, path to remote folder, path to config and aterm files, check offline status and checksum for every file.
 
 Change log:
+v0.13.5 bug fix to IndexError reporting
 v0.13.4 list problem if offline gives an IndexError and file isn't empty as expected
 v0.13.3 catch IndexError exceptions with remote_crc
 v0.13.2 fix counts
@@ -46,7 +47,6 @@ add other date options?
 warn if prefix exists?
 warn if prefix contains weird characters?
 check dates/sizes too?
-get actual error messages from aterm.jar?
 """
 
 import subprocess
@@ -279,7 +279,8 @@ def main(prefix, folder, rdmp_id, config_path, path_subtract, path_add, days_sin
                     except IndexError as err:
                         fail_counter += 1
                         log_message = local_path + ': unexpected output for remote checksum. File was last modified on: ' + file_age
-                        problem_files = appendMessage(verbose, problem_files, log_message, err + ' ' + remote_crc_output, "Remote checksum processing error")
+                        err = "{0} ".format(err.output).rstrip() + remote_crc_output
+                        problem_files = appendMessage(verbose, problem_files, log_message, err, "Remote checksum processing error")
                         addToDic("unexpected output for remote checksum", problem_dict)
                     else:
                         if not os.access(local_path, os.R_OK):
