@@ -4,6 +4,7 @@
 Given a local folder, path to remote folder, path to config and aterm files, check offline status and checksum for every file.
 
 Change log:
+v0.13.3 catch IndexError exceptions with remote_crc
 v0.13.2 fix counts
 v0.13.1 Add --verbose flag to add full error messages to logs
 v0.13.0 Add summary numbers for each error type
@@ -267,7 +268,8 @@ def main(prefix, folder, rdmp_id, config_path, path_subtract, path_add, days_sin
                 else:
                     cmd = 'java -Dmf.cfg=' + os.path.join(config_path, 'config.cfg') + ' -jar ' + os.path.join(config_path, 'aterm.jar') + ' nogui asset.get :id path=\'' + remote_path + '\' :xpath "content/csum"'
                     try:
-                        remote_crc = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT).split('"')[1].upper()
+                        remote_crc_output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+                        remote_crc = remote_crc_output.split('"')[1].upper()
                     except subprocess.CalledProcessError as err:
                         fail_counter += 1
                         log_message = local_path + ': file not found on archive. File was last modified on: ' + file_age
@@ -275,6 +277,11 @@ def main(prefix, folder, rdmp_id, config_path, path_subtract, path_add, days_sin
                             err = ". Remote file error: {0}".format(err.output).rstrip()
                             log_message += err
                         new_files, old_files = appendIssue(log_message + '. \n', new_files, old_files, new, new_dict, old_dict)
+                    except IndexError as err:
+                        fail_counter += 1
+                        log_message = local_path + ': unexpected output for remote checksum. File was last modified on: ' + file_age
+                        problem_files = appendMessage(verbose, problem_files, log_message, err + ' ' + remote_crc_output, "Remote checksum processing error")
+                        addToDic("unexpected output for remote checksum", problem_dict)
                     else:
                         if not os.access(local_path, os.R_OK):
                             fail_counter += 1
