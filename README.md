@@ -32,8 +32,8 @@ Options:
  --days_since_backup=DAYS_SINCE_BACKUP
                        Estimate of the number of days since last back up,
                        default=7
---verbose             Add full error messages to output```
-
+--verbose             Add full error messages to output
+```
 ## Change Log
 
 v0.13.3 catch IndexError exceptions with remote_crc<br/>
