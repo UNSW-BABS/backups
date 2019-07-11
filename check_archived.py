@@ -4,6 +4,7 @@
 Given a local folder, path to remote folder, path to config and aterm files, check offline status and checksum for every file.
 
 Change log:
+v0.13.6 pass errors out with sanity checks (and verbose), added printErrExit() function
 v0.13.5 bug fix to IndexError reporting
 v0.13.4 list problem if offline gives an IndexError and file isn't empty as expected
 v0.13.3 catch IndexError exceptions with remote_crc
@@ -80,7 +81,16 @@ def appendMessage(verbose, log, log_message, err, err_desc):
     log.append(log_message + '\n')
     return log
 
+def printErrExit(err, prefix, sub_err, verbose):
+    if verbose:
+        err = err + ". {0}".format(sub_err.output).rstrip()
+    print(err)
+    with open(prefix + '.tdt', 'w') as f:
+        f.write(err + '\n')
+    exit()
+
 def main(prefix, folder, rdmp_id, config_path, path_subtract, path_add, days_since_backup, verbose):
+    sub_err = ''
     ## Check output file can be written to
     try:
         with open(prefix + '.tdt', 'w') as f:
@@ -92,78 +102,48 @@ def main(prefix, folder, rdmp_id, config_path, path_subtract, path_add, days_sin
     if sys.version_info[0] == 2:
         if sys.version_info[1] < 7 or (sys.version_info[1] == 7 and sys.version_info[2] < 5):
             err = 'Error: Your python version needs to be at least v2.7.5. It is only: v' + platform.python_version() + '. If you are trying to run this on kdm.science.unsw.edu.au, try kdm.restech.unsw.edu.au instead.'
-            print(err)
-            with open(prefix + '.tdt', 'w') as f:
-                f.write(err + '\n')
-            exit()
+            printErrExit(err, prefix, sub_err, verbose)
     ## Check java installation
     cmd = 'java -version'
     try:
         subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as sub_err:
         err = 'Error: Java is not installed. If running on kdm.restech.unsw.edu.au, try running "module add unswdataarchive"'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check folder exists
     if not os.path.isdir(folder):
         err = 'Error: "' + folder + '" is not an existing folder'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ##Check path_subtract is a prefix of folder
     ##Add a trailing slash so a trailing slash in path_subtract doesn't cause an issue
     folder_abs = os.path.join(os.path.abspath(folder), '')
     if not folder_abs.startswith(path_subtract):
         err = 'Error: --path_subtract value "' + path_subtract + '" is not a prefix of folder "' + folder_abs + '"'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-            exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ##Check RDMP ID is well formed
     if not re.match('D\d{7}', rdmp_id) != None:
-        err = 'Error: "' + rdmp_id + '" is not a well formed RDMP ID. It needs to be a "D" followed by seven digits.'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-            exit()
+        err = 'Error: "' + rdmp_id + '" is not a well formed RDMP ID. It needs to be a "D" followed by seven digits'
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check config_path exists
     if not os.path.isdir(config_path):
         err = 'Error: "' + config_path + '" is not an existing folder'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check aterm.jar is in config_path
     if not os.path.isfile(os.path.join(config_path, 'aterm.jar')):
         err = 'Error: the required aterm.jar file is not present in the folder "' + config_path + '"'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check config.cfg is in config_path
     if not os.path.isfile(os.path.join(config_path, 'config.cfg')):
         err = 'Error: the required config.cfg file is not present in the folder "' + config_path + '"'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check aterm.jar permissions
     if not os.access(os.path.join(config_path, 'aterm.jar'), os.R_OK):
         err = 'Error: permission denied to read required aterm.jar file'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check config.cfg permissions
     if not os.access(os.path.join(config_path, 'config.cfg'), os.R_OK):
         err = 'Error: permission denied to read required config.cfg file'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check crc32 or equivalent works
     crc_command = 'crc32'
     cmd = crc_command + ' "' + os.path.join(config_path, 'config.cfg') + '"'
@@ -180,11 +160,8 @@ def main(prefix, folder, rdmp_id, config_path, path_subtract, path_add, days_sin
             try:
                 local_crc = subprocess.check_output(cmd, shell=True)
             except subprocess.CalledProcessError:
-                err = 'Error: "crc32", "rhash -C" and "cksum -o 3" commands all return non-zero exit status. If running on katana, try kdm.restech.unsw.edu.au instead.'
-                print(err)
-                with open(prefix + '.tdt', 'w') as f:
-                    f.write(err + '\n')
-                exit()
+                err = 'Error: "crc32", "rhash -C" and "cksum -o 3" commands all return non-zero exit status. If running on katana, try kdm.restech.unsw.edu.au instead'
+                printErrExit(err, prefix, sub_err, verbose)
     ## Check remote connection
     cmd = 'java -Dmf.cfg=' + os.path.join(config_path, 'config.cfg') + ' -jar ' + os.path.join(config_path, 'aterm.jar') + ' nogui asset.namespace.exists :namespace "/"'
     try:
@@ -193,10 +170,7 @@ def main(prefix, folder, rdmp_id, config_path, path_subtract, path_add, days_sin
         connected = '"false"'
     if connected != '"true"':
         err = 'Error: Could not connect to UNSW Research Data Store. config.cfg must contain the appropriate password or token. Try running: \'' + cmd + '\''
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check remote folder exists
     remote_path = '/UNSW_RDS/' + rdmp_id + '/' + path_add + '/' + folder_abs.replace(path_subtract, '')
     remote_path = remote_path.replace('\\', '\\\\').replace('"', '\\"').replace("'", "'\"'\"'")
@@ -206,20 +180,14 @@ def main(prefix, folder, rdmp_id, config_path, path_subtract, path_add, days_sin
     except subprocess.CalledProcessError:
         exists = '"false"'
     if exists != '"true"':
-        err = 'Error: The namespace "' + remote_path + '" does not exist on UNSW Research Data Store. You may need to check your settings of --rdmp_id, --path_subtract and --path_add. Alternatively, this folder may not have been backed up at all yet.'
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        err = 'Error: The namespace "' + remote_path + '" does not exist on UNSW Research Data Store. You may need to check your settings of --rdmp_id, --path_subtract and --path_add. Alternatively, this folder may not have been backed up at all yet'
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check days_since_backup isn't too big
     try:
         timedelta(days_since_backup)
     except OverflowError as err:
         err = "Error: Problem with --days_since_backup: {0}".format(err)
-        print(err)
-        with open(prefix + '.tdt', 'w') as f:
-            f.write(err + '\n')
-        exit()
+        printErrExit(err, prefix, sub_err, verbose)
     ## Check files
     passed_counter = 0
     fail_counter = 0
