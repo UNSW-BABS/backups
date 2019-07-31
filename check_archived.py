@@ -4,6 +4,7 @@
 Given a local folder, path to remote folder, path to config and aterm files, check offline status and checksum for every file.
 
 Change log:
+v0.13.7 fix IndexError crash
 v0.13.6 pass errors out with sanity checks (and verbose), added printErrExit() function
 v0.13.5 bug fix to IndexError reporting
 v0.13.4 list problem if offline gives an IndexError and file isn't empty as expected
@@ -247,7 +248,7 @@ def main(prefix, folder, rdmp_id, config_path, path_subtract, path_add, days_sin
                     except IndexError as err:
                         fail_counter += 1
                         log_message = local_path + ': unexpected output for remote checksum. File was last modified on: ' + file_age
-                        err = "{0} ".format(err.output).rstrip() + remote_crc_output
+                        err = "{0} ".format(err).rstrip() + remote_crc_output
                         problem_files = appendMessage(verbose, problem_files, log_message, err, "Remote checksum processing error")
                         addToDic("unexpected output for remote checksum", problem_dict)
                     else:
