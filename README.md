@@ -37,6 +37,7 @@ Options:
 ```
 ## Change Log
 
+v0.13.7 fix IndexError crash
 v0.13.6 pass errors out with sanity checks (and verbose), added printErrExit() function
 v0.13.5 bug fix to IndexError reporting<br/>
 v0.13.4 list problem if offline gives an IndexError and file isn't empty as expected<br/>
